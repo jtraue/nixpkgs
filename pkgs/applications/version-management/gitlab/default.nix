@@ -113,7 +113,7 @@ stdenv.mkDerivation {
     rubyEnv rubyEnv.wrappedRuby rubyEnv.bundler tzdata git nettools
   ];
 
-  patches = [ ./remove-hardcoded-locations.patch ];
+  patches = [ ./remove-hardcoded-locations.patch ] ++ (if !gitlabEnterprise then [ ./fix-ce-version.patch ] else [] );
 
   postPatch = ''
     ${lib.optionalString (!gitlabEnterprise) ''
