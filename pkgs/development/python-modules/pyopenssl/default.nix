@@ -50,7 +50,7 @@ let
     # https://github.com/pyca/pyopenssl/issues/768
     "test_wantWriteError"
   ] ++ (
-    optionals (hasPrefix "libressl" openssl.meta.name) failingLibresslTests
+    failingLibresslTests
   ) ++ (
     optionals (versionAtLeast (getVersion openssl.name) "1.1") failingOpenSSL_1_1Tests
   );
