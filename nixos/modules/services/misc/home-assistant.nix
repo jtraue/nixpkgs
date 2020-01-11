@@ -19,6 +19,12 @@ let
     ${pkgs.remarshal}/bin/json2yaml -i ${lovelaceConfigJSON} -o $out
   '';
 
+  knownDevicesConfigJSON = pkgs.writeText "known_devices.json"
+    (builtins.toJSON cfg.knownDevicesConfig);
+  knownDevicesConfigFile = pkgs.runCommand "known_devices.yaml" { preferLocalBuild = true; } ''
+    ${pkgs.remarshal}/bin/json2yaml -i ${knownDevicesConfigJSON} -o $out
+  '';
+
   availableComponents = cfg.package.availableComponents;
 
   usedPlatforms = config:
@@ -195,6 +201,21 @@ in {
       type = types.bool;
       description = "Whether to open the firewall for the specified port.";
     };
+
+    knownDevicesConfig = mkOption {
+      default = null;
+      type = with types; nullOr attrs;
+      # from https://www.home-assistant.io/lovelace/yaml-mode/
+      example = literalExample ''
+        {
+        TODO
+        }
+      '';
+      description = ''
+        Your <filename>known_devices.yaml</filename> as a Nix attribute set.
+        Makes only sense when the device_tracker integration is enabled.
+      '';
+    };
   };
 
   config = mkIf cfg.enable {
@@ -213,6 +234,9 @@ in {
       '' else ''
         rm -f "${cfg.configDir}/ui-lovelace.yaml"
         ln -s ${lovelaceConfigFile} "${cfg.configDir}/ui-lovelace.yaml"
+      '') + optionalString (cfg.knownDevicesConfig != null) (''
+        rm -f "${cfg.configDir}/known_devices.yaml"
+        ln -s ${knownDevicesConfigFile} "${cfg.configDir}/known_devices.yaml"
       '');
       serviceConfig = {
         ExecStart = "${package}/bin/hass --config '${cfg.configDir}'";
