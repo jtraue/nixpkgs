@@ -38,6 +38,5 @@ buildPythonPackage rec {
     description = "A SoCo fork with fixes for Home Assistant";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ juaningan ];
-    broken = true;
   };
 }
