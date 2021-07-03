@@ -451,6 +451,10 @@ self: super: {
       };
     });
 
+  taskwiki = super.taskwiki.overrideAttrs (old: {
+    passthru.python3Dependencies = ps: with ps; [ tasklib ];
+  });
+
   telescope-frecency-nvim = super.telescope-frecency-nvim.overrideAttrs (old: {
     dependencies = with self; [ sql-nvim telescope-nvim ];
   });
